@@ -1,0 +1,51 @@
+= fluent-plugin-filter
+
+== Component
+
+=== FilterOutput
+
+Filtering messages by simple allow/deny rules.
+
+== Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'fluent-plugin-filter'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install fluent-plugin-filter
+
+== Configuration
+
+=== FilterOutput
+
+Filter out messages contains <tt>{status : 404}</tt> :
+
+    <match accesslog.**>
+      type filter
+      all allow
+      deny status: 404
+    </match>
+    <match filtered.**>
+      type stdout
+    </match>
+
+in above configuration, <tt>{status: 404}</tt> is filtered out and <tt>{status: 200}</tt>, <tt>{status: 303}</tt>, <tt>{status: 401}</tt> passed.
+Messages passing filter are add_prefix (default filtered.)
+
+So you catch "filtered" tag and do next process.
+
+You can use int, float, string, regexp in value.
+
+== Contributing
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create new Pull Request
