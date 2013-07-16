@@ -18,7 +18,7 @@ class FilterOutput < Output
 
   def toMap (str)
     str.split(/\s*,\s*/).map do|pair|
-      k, v = pair.split(/\s*:\s*/)
+      k, v = pair.split(/\s*:\s*/, 2)
       if v =~ /^\d+$/
         v = v.to_i
       elsif v =~ /^[\d\.]+(e\d+)?$/
