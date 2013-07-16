@@ -50,6 +50,14 @@ class Filter < Test::Unit::TestCase
     assert_equal [['status', '200']], d.instance.allows
     assert_equal [], d.instance.denies
 
+    # text value
+    d = create_driver %[
+      all deny
+      allow status: "https://my.website.com/"
+    ]
+    assert_equal [['status', 'https://my.website.com/']], d.instance.allows
+    assert_equal [], d.instance.denies
+
     # regexp value
     d = create_driver %[
       all deny
