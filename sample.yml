@@ -1,0 +1,9 @@
+allow:
+  status:
+    - 200
+deny:
+  status:
+    - 404
+    - 403
+  user-agent: 
+    - !ruby/regexp /Googlebot/
