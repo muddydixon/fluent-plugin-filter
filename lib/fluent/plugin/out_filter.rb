@@ -35,9 +35,9 @@ class FilterOutput < Output
   def passRules (record)
     if @all == 'allow'
       @denies.each do |deny|
-        if (deny[1].is_a? Regexp and record[deny[0]].match(deny[1])) or record[deny[0]] == deny[1]
+        if (deny[1].is_a? Regexp and record[deny[0]].match(deny[1]) unless record[deny[0]].nil?) or record[deny[0]] == deny[1]
           @allows.each do |allow|
-            if (allow[1].is_a? Regexp and record[allow[0]].match(allow[1])) or record[allow[0]] == allow[1]
+            if (allow[1].is_a? Regexp and record[allow[0]].match(allow[1]) unless record[allow[0]].nil?) or record[allow[0]] == allow[1]
               return true
             end
           end
@@ -47,9 +47,9 @@ class FilterOutput < Output
       return true
     else
       @allows.each do |allow|
-        if (allow[1].is_a? Regexp and record[allow[0]].match(allow[1])) or record[allow[0]] == allow[1]
+        if (allow[1].is_a? Regexp and record[allow[0]].match(allow[1]) unless record[allow[0]].nil?) or record[allow[0]] == allow[1]
           @denies.each do |deny|
-            if (deny[1].is_a? Regexp and record[deny[0]].match(deny[1])) or record[deny[0]] == deny[1]
+            if (deny[1].is_a? Regexp and record[deny[0]].match(deny[1]) unless record[allow[0]].nil?) or record[deny[0]] == deny[1]
               return false
             end
           end

@@ -154,6 +154,28 @@ class Filter < Test::Unit::TestCase
 
     d = create_driver(%[
       all deny
+      allow test: /Geck/
+    ], 'test.input')
+    d.run do
+      data.each do |dat|
+        d.emit dat
+      end
+    end
+    assert_equal 0, d.emits.length
+
+    d = create_driver(%[
+      all allow
+      deny test: /Geck/
+    ], 'test.input')
+    d.run do
+      data.each do |dat|
+        d.emit dat
+      end
+    end
+    assert_equal 6, d.emits.length
+
+    d = create_driver(%[
+      all deny
       allow agent: /Geck/
       add_prefix hoge
     ], 'test.input')
