@@ -164,5 +164,34 @@ class Filter < Test::Unit::TestCase
     end
     assert_equal "hoge.test.input", d.emits[0][0]
 
+    data = [
+      {'message' => 'hoge', 'message2' => 'hoge2'},
+      {'message' => 'hoge3'},
+    ]
+
+    d = create_driver(%[
+      all deny
+      allow message2: /hoge2/
+    ], 'test.input')
+
+    d.run do
+      data.each do |dat|
+        d.emit dat
+      end
+    end
+    assert_equal 1, d.emits.length
+
+    d = create_driver(%[
+      all allow
+      deny message2: /hoge2/
+    ], 'test.input')
+
+    d.run do
+      data.each do |dat|
+        d.emit dat
+      end
+    end
+    assert_equal 1, d.emits.length
+
   end
 end
