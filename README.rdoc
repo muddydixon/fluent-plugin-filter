@@ -24,7 +24,7 @@ Or install it yourself as:
 
 === FilterOutput
 
-Filter out messages contains <tt>{status : 404}</tt> :
+Filter out messages contains <tt>{status: 404}</tt> :
 
     <match accesslog.**>
       type filter
@@ -41,6 +41,28 @@ Messages passing filter are add_prefix (default filtered.)
 So you catch "filtered" tag and do next process.
 
 You can use int, float, string, regexp in value.
+
+=== YAMLFilterOutput
+
+Writing the Filter YAML File
+
+    deny:
+      status:
+        - 404
+        - 403
+      user-agent:
+        - !ruby/regexp /Googlebot/
+  
+Filter out messages contains <tt>{status: 404}</tt>, <tt>{status: 403}</tt> and <tt>{user-agent: /Googlebot/}</tt> :
+
+    <match accesslog.**>
+      type filter
+      all allow
+      yaml sample.yml
+    </match>
+    <match filtered.**>
+      type stdout
+    </match>
 
 == Contributing
 
