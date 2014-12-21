@@ -23,7 +23,7 @@ class FilterOutput < Output
         v = v.to_i
       elsif v =~ /^[\d\.]+(e\d+)?$/
         v = v.to_f
-      elsif v =~ /^\/[^\/]+\/$/
+      elsif v =~ /^\/(\\\/|[^\/])+\/$/
         v = Regexp.new(v.gsub(/^\/|\/$/, ''))
       else
         v = v.gsub(/^[\"\']|[\"\']$/, '')
