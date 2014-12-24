@@ -6,7 +6,7 @@ class FilterOutput < Output
   config_param :allow, :string, :default => ''
   config_param :deny, :string, :default => ''
   config_param :add_prefix, :string, :default => 'filtered'
-  
+
   attr_accessor :allows
   attr_accessor :denies
 
@@ -23,7 +23,7 @@ class FilterOutput < Output
         v = v.to_i
       elsif v =~ /^[\d\.]+(e\d+)?$/
         v = v.to_f
-      elsif v =~ /^\/[^\/]+\/$/
+      elsif v =~ /^\/(\\\/|[^\/])+\/$/
         v = Regexp.new(v.gsub(/^\/|\/$/, ''))
       else
         v = v.gsub(/^[\"\']|[\"\']$/, '')

@@ -65,16 +65,24 @@ class Filter < Test::Unit::TestCase
     ]
     assert_equal [['url', /hoge/]], d.instance.allows
     assert_equal [], d.instance.denies
-    
+
+    # regexp value with forward slashes
+    d = create_driver %[
+      all deny
+      allow url: /\\/users\\/\\d+/
+    ]
+    assert_equal [['url', Regexp.new("\\/users\\/\\d+")]], d.instance.allows
+    assert_equal [], d.instance.denies
+
   end
   def test_emit
     data = [
-      {'status' => 200, 'agent' => 'IE'},
+      {'status' => 200, 'agent' => 'IE', 'path' => '/users/1'},
       {'status' => 303, 'agent' => 'Gecko'},
-      {'status' => 200, 'agent' => 'IE'},
+      {'status' => 200, 'agent' => 'IE', 'path' => '/users/2'},
       {'status' => 401, 'agent' => 'Gecko'},
-      {'status' => 200, 'agent' => 'Gecka'},
-      {'status' => 404, 'agent' => 'Gecko'},
+      {'status' => 200, 'agent' => 'Gecka', 'path' => '/users/3'},
+      {'status' => 404, 'agent' => 'Gecko', 'path' => '/wrong'},
     ]
 
     d = create_driver(CONFIG, 'test.input')
@@ -163,6 +171,18 @@ class Filter < Test::Unit::TestCase
       end
     end
     assert_equal "hoge.test.input", d.emits[0][0]
+
+    d = create_driver(%[
+      all deny
+      allow path: /\\/users\\/\\d+/
+    ], 'test.input')
+
+    d.run do
+      data.each do |dat|
+        d.emit dat
+      end
+    end
+    assert_equal 3, d.emits.length
 
     data = [
       {'message' => 'hoge', 'message2' => 'hoge2'},
