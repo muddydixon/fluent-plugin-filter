@@ -6,7 +6,7 @@ class FilterOutput < Output
   config_param :allow, :string, :default => ''
   config_param :deny, :string, :default => ''
   config_param :add_prefix, :string, :default => 'filtered'
-  
+
   attr_accessor :allows
   attr_accessor :denies
 

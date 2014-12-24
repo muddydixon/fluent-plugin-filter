@@ -73,7 +73,7 @@ class Filter < Test::Unit::TestCase
     ]
     assert_equal [['url', Regexp.new("\\/users\\/\\d+")]], d.instance.allows
     assert_equal [], d.instance.denies
-    
+
   end
   def test_emit
     data = [
@@ -176,7 +176,7 @@ class Filter < Test::Unit::TestCase
       all deny
       allow path: /\\/users\\/\\d+/
     ], 'test.input')
-    
+
     d.run do
       data.each do |dat|
         d.emit dat
