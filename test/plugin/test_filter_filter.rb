@@ -65,7 +65,7 @@ class TestFilterFilter < Test::Unit::TestCase
     assert_equal [], d.instance.denies
 
   end
-  def test_emit
+  def test_filter
     data = [
       {'status' => 200, 'agent' => 'IE', 'path' => '/users/1'},
       {'status' => 303, 'agent' => 'Gecko'},
@@ -78,10 +78,10 @@ class TestFilterFilter < Test::Unit::TestCase
     d = create_driver(CONFIG, 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 5, d.emits.length
+    assert_equal 5, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -89,10 +89,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -100,10 +100,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 4, d.emits.length
+    assert_equal 4, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -111,10 +111,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -122,10 +122,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -134,10 +134,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -145,10 +145,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 4, d.emits.length
+    assert_equal 4, d.filtered_as_array.length
 
     d = create_driver(%[
       all deny
@@ -156,10 +156,10 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal "test.input", d.emits[0][0]
+    assert_equal "test.input", d.filtered_as_array[0][0]
 
     d = create_driver(%[
       all deny
@@ -168,10 +168,10 @@ class TestFilterFilter < Test::Unit::TestCase
 
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.filtered_as_array.length
 
     data = [
       {'message' => 'hoge', 'message2' => 'hoge2'},
@@ -185,10 +185,10 @@ class TestFilterFilter < Test::Unit::TestCase
 
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 1, d.emits.length
+    assert_equal 1, d.filtered_as_array.length
 
     d = create_driver(%[
       all allow
@@ -197,10 +197,10 @@ class TestFilterFilter < Test::Unit::TestCase
 
     d.run do
       data.each do |dat|
-        d.emit dat
+        d.filter dat
       end
     end
-    assert_equal 1, d.emits.length
+    assert_equal 1, d.filtered_as_array.length
 
   end
 end
