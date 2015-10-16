@@ -50,7 +50,7 @@ class TestFilterFilter < Test::Unit::TestCase
   end
 
   def test_filter
-    data = [
+    inputs = [
       {'status' => 200, 'agent' => 'IE', 'path' => '/users/1'},
       {'status' => 303, 'agent' => 'Gecko'},
       {'status' => 200, 'agent' => 'IE', 'path' => '/users/2'},
@@ -61,7 +61,7 @@ class TestFilterFilter < Test::Unit::TestCase
 
     d = create_driver(CONFIG, 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -72,7 +72,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow status: 200
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -83,7 +83,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow status: 200, status: 303
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -94,7 +94,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow agent: Gecko
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -105,7 +105,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow agent: "Gecko"
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -117,7 +117,7 @@ class TestFilterFilter < Test::Unit::TestCase
       deny status: 200
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -128,7 +128,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow agent: /Geck/
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -139,7 +139,7 @@ class TestFilterFilter < Test::Unit::TestCase
       allow agent: /Geck/
     ], 'test.input')
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -151,13 +151,13 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
 
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
     assert_equal 3, d.filtered_as_array.length
 
-    data = [
+    inputs = [
       {'message' => 'hoge', 'message2' => 'hoge2'},
       {'message' => 'hoge3'},
     ]
@@ -168,7 +168,7 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
 
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
@@ -180,7 +180,7 @@ class TestFilterFilter < Test::Unit::TestCase
     ], 'test.input')
 
     d.run do
-      data.each do |dat|
+      inputs.each do |dat|
         d.filter dat
       end
     end
