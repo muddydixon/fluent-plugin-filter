@@ -15,56 +15,40 @@ class TestFilterFilter < Test::Unit::TestCase
     Fluent::Test::FilterTestDriver.new(Fluent::FilterFilter, tag).configure(conf)
   end
 
-  def test_configure
-    # int value
-    d = create_driver %[
+  data("int value" => [{"allows" => [['status', 200]], "denies" => []},
+    %[
       all deny
       allow status: 200
-    ]
-    assert_equal [['status', 200]], d.instance.allows
-    assert_equal [], d.instance.denies
-
-    # float value
-    d = create_driver %[
+    ]],
+       "float value" => [{"allows" => [['status', 200.0]], "denies" => []},
+    %[
       all deny
       allow status: 200.0
-    ]
-    assert_equal [['status', 200.0]], d.instance.allows
-    assert_equal [], d.instance.denies
-
-    # text value
-    d = create_driver %[
+    ]],
+      "text value" => [{"allows" => [['status', '200']], "denies" => []},
+    %[
       all deny
-      allow status: "200"
-    ]
-    assert_equal [['status', '200']], d.instance.allows
-    assert_equal [], d.instance.denies
-
-    # text value
-    d = create_driver %[
+      allow status: '200'
+    ]],
+      "text value with URL" =>
+      [{"allows" => [['status', 'https://my.website.com/']], "denies" => []},
+    %[
       all deny
       allow status: "https://my.website.com/"
-    ]
-    assert_equal [['status', 'https://my.website.com/']], d.instance.allows
-    assert_equal [], d.instance.denies
-
-    # regexp value
-    d = create_driver %[
-      all deny
-      allow url: /hoge/
-    ]
-    assert_equal [['url', /hoge/]], d.instance.allows
-    assert_equal [], d.instance.denies
-
-    # regexp value with forward slashes
-    d = create_driver %[
+    ]],
+      "regexp value with forward slashes" =>
+      [{"allows" => [['url', Regexp.new("\\/users\\/\\d+")]], "denies" => []},
+    %[
       all deny
       allow url: /\\/users\\/\\d+/
-    ]
-    assert_equal [['url', Regexp.new("\\/users\\/\\d+")]], d.instance.allows
-    assert_equal [], d.instance.denies
-
+    ]])
+  def test_configure(data)
+    expected, target = data
+    d = create_driver target
+    assert_equal expected["allows"], d.instance.allows
+    assert_equal expected["denies"], d.instance.denies
   end
+
   def test_filter
     data = [
       {'status' => 200, 'agent' => 'IE', 'path' => '/users/1'},
