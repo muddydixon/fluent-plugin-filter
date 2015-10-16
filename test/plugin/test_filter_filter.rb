@@ -49,7 +49,39 @@ class TestFilterFilter < Test::Unit::TestCase
     assert_equal expected["denies"], d.instance.denies
   end
 
-  def test_filter
+  data("config" => [5, CONFIG],
+       "allow status 200" => [3,
+    %[
+      all deny
+      allow status: 200
+    ]],
+       "allow status 200 and 303" => [4,
+    %[
+      all deny
+      allow status: 200, status: 303
+    ]],
+       "allow Gecko agent" => [3,
+    %[
+      all deny
+      allow agent: Gecko
+    ]],
+       "allow \"Gecko\" agent" => [3,
+    %[
+      all deny
+      allow agent: "Gecko"
+    ]],
+       "allow /Geck/ Regexp matched agent" => [4,
+    %[
+      all deny
+      allow agent: /Geck/
+    ]],
+       "allow /\\/users\\/\\d+/ Regexp matched path" => [3,
+    %[
+      all deny
+      allow path: /\\/users\\/\\d+/
+    ]])
+  def test_filter(data)
+    expected, target = data
     inputs = [
       {'status' => 200, 'agent' => 'IE', 'path' => '/users/1'},
       {'status' => 303, 'agent' => 'Gecko'},
@@ -58,133 +90,37 @@ class TestFilterFilter < Test::Unit::TestCase
       {'status' => 200, 'agent' => 'Gecka', 'path' => '/users/3'},
       {'status' => 404, 'agent' => 'Gecko', 'path' => '/wrong'},
     ]
-
-    d = create_driver(CONFIG, 'test.input')
+    d = create_driver(target, 'test.input')
     d.run do
       inputs.each do |dat|
         d.filter dat
       end
     end
-    assert_equal 5, d.filtered_as_array.length
+    assert_equal expected, d.filtered_as_array.length
+  end
 
-    d = create_driver(%[
-      all deny
-      allow status: 200
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 3, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow status: 200, status: 303
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 4, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow agent: Gecko
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 3, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow agent: "Gecko"
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 3, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow agent: "Gecko"
-      deny status: 200
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 3, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow agent: /Geck/
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 4, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all deny
-      allow agent: /Geck/
-    ], 'test.input')
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal "test.input", d.filtered_as_array[0][0]
-
-    d = create_driver(%[
-      all deny
-      allow path: /\\/users\\/\\d+/
-    ], 'test.input')
-
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 3, d.filtered_as_array.length
-
+  data("allow message2" => [1,
+     %[
+       all deny
+       allow message2: /hoge2/
+     ]],
+       "deny message2" => [1,
+     %[
+       all allow
+       deny message2: /hoge2/
+     ]])
+  def test_filter_message(data)
+    expected, target = data
     inputs = [
       {'message' => 'hoge', 'message2' => 'hoge2'},
       {'message' => 'hoge3'},
     ]
-
-    d = create_driver(%[
-      all deny
-      allow message2: /hoge2/
-    ], 'test.input')
-
+    d = create_driver(target, 'test.input')
     d.run do
       inputs.each do |dat|
         d.filter dat
       end
     end
-    assert_equal 1, d.filtered_as_array.length
-
-    d = create_driver(%[
-      all allow
-      deny message2: /hoge2/
-    ], 'test.input')
-
-    d.run do
-      inputs.each do |dat|
-        d.filter dat
-      end
-    end
-    assert_equal 1, d.filtered_as_array.length
-
+    assert_equal expected, d.filtered_as_array.length
   end
 end
