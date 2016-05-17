@@ -42,6 +42,18 @@ So you catch "filtered" tag and do next process.
 
 You can use int, float, string, regexp in value.
 
+=== FilterFilter
+
+In fluentd >= 0.12, we can use `filter` declarative. So release Filter filter:
+
+    <filter accesslog.**>
+      type filter
+      all allow
+      deny status: 404
+    </filter>
+
+Thanks to @cosmo0920
+
 === Parameters
 
 ==== all <allow|deny>
