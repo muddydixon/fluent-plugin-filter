@@ -1,5 +1,5 @@
 module Fluent
-  module FilterSupplement
+  module FilterUtil
     def toMap (str)
       str.split(/\s*,\s*/).map do|pair|
         k, v = pair.split(/\s*:\s*/, 2)

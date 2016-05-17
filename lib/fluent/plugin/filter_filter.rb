@@ -1,7 +1,7 @@
 module Fluent
 class FilterFilter < Filter
-  require 'fluent/plugin/filter_supplement'
-  include FilterSupplement
+  require 'fluent/plugin/filter_util'
+  include FilterUtil
 
   Plugin.register_filter('filter', self)
 
