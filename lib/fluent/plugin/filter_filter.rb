@@ -1,14 +1,13 @@
 module Fluent
-class FilterOutput < Output
+class FilterFilter < Filter
   require 'fluent/plugin/filter_util'
   include FilterUtil
 
-  Plugin.register_output('filter', self)
+  Plugin.register_filter('filter', self)
 
   config_param :all, :string, :default => 'allow'
   config_param :allow, :string, :default => ''
   config_param :deny, :string, :default => ''
-  config_param :add_prefix, :string, :default => 'filtered'
 
   attr_accessor :allows
   attr_accessor :denies
@@ -19,15 +18,8 @@ class FilterOutput < Output
     @denies = toMap(@deny)
   end
 
-  def emit(tag, es, chain)
-    if @add_prefix
-      tag = @add_prefix + '.' + tag
-    end
-    es.each do |time, record|
-      next unless passRules(record)
-      Engine.emit(tag, time, record)
-    end
-    chain.next
+  def filter(tag, time, record)
+    record if passRules(record)
   end
 end
 
