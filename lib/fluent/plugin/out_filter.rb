@@ -25,7 +25,7 @@ class FilterOutput < Output
     end
     es.each do |time, record|
       next unless passRules(record)
-      Engine.emit(tag, time, record)
+      router.emit(tag, time, record)
     end
     chain.next
   end
