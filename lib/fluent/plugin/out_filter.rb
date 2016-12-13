@@ -19,13 +19,18 @@ class FilterOutput < Output
     @denies = toMap(@deny)
   end
 
+  # Define `router` method of v0.12 to support v0.10 or earlier
+  unless method_defined?(:router)
+    define_method("router") { Fluent::Engine }
+  end
+
   def emit(tag, es, chain)
     if @add_prefix
       tag = @add_prefix + '.' + tag
     end
     es.each do |time, record|
       next unless passRules(record)
-      Engine.emit(tag, time, record)
+      router.emit(tag, time, record)
     end
     chain.next
   end
