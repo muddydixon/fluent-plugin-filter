@@ -1,7 +1,7 @@
 module Fluent
   module FilterUtil
-    def toMap (str)
-      str.split(/\s*,\s*/).map do|pair|
+    def toMap (str, delim)
+      str.split(/\s*#{delim}\s*/).map do|pair|
         k, v = pair.split(/\s*:\s*/, 2)
         if v =~ /^\d+$/
           v = v.to_i

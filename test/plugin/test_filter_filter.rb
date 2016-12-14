@@ -41,7 +41,21 @@ class TestFilterFilter < Test::Unit::TestCase
     %[
       all deny
       allow url: /\\/users\\/\\d+/
-    ]])
+    ]],
+      "test values" =>
+      [{"allows" => [['message', 'CRIT'], ['message', 'WARN']], "denies" => []},
+    %[
+      all deny
+      allow message: 'CRIT', message: 'WARN'
+    ]],
+      "test values with comma" =>
+      [{"allows" => [['message', 'CRIT,'], ['message', 'WARN']], "denies" => []},
+    %[
+      all deny
+      allow message: 'CRIT,' % message: 'WARN'
+      delim %
+    ]],
+      )
   def test_configure(data)
     expected, target = data
     d = create_driver target
