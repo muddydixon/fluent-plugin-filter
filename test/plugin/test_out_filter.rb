@@ -74,6 +74,23 @@ class Filter < Test::Unit::TestCase
     assert_equal [['url', Regexp.new("\\/users\\/\\d+")]], d.instance.allows
     assert_equal [], d.instance.denies
 
+    # text values
+    d = create_driver %[
+      all deny
+      allow message: 'CRIT', message: 'WARN'
+    ]
+    assert_equal [['message', 'CRIT'], ['message', 'WARN']], d.instance.allows
+    assert_equal [], d.instance.denies
+
+    # test values with comma
+    d = create_driver %[
+      all deny
+      allow message: 'CRIT,' % message: 'WARN'
+      delim %
+    ]
+    assert_equal [['message', 'CRIT,'], ['message', 'WARN']], d.instance.allows
+    assert_equal [], d.instance.denies
+
   end
   def test_emit
     data = [

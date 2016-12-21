@@ -8,14 +8,15 @@ class FilterFilter < Filter
   config_param :all, :string, :default => 'allow'
   config_param :allow, :string, :default => ''
   config_param :deny, :string, :default => ''
+  config_param :delim, :string, :default => ','
 
   attr_accessor :allows
   attr_accessor :denies
 
   def configure(conf)
     super
-    @allows = toMap(@allow)
-    @denies = toMap(@deny)
+    @allows = toMap(@allow, @delim)
+    @denies = toMap(@deny, @delim)
   end
 
   def filter(tag, time, record)
