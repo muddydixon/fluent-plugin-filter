@@ -1,4 +1,4 @@
-module Fluent
+module Fluent::Plugin
   module FilterUtil
     def toMap (str, delim)
       str.split(/\s*#{delim}\s*/).map do|pair|
