@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'helper'
+require 'fluent/test/driver/output'
 
 class Filter < Test::Unit::TestCase
   def setup
@@ -11,8 +12,8 @@ class Filter < Test::Unit::TestCase
     deny status: 404
   ]
 
-  def create_driver(conf = CONFIG, tag='test.input')
-    Fluent::Test::OutputTestDriver.new(Fluent::FilterOutput, tag).configure(conf)
+  def create_driver(conf = CONFIG)
+    Fluent::Test::Driver::Output.new(Fluent::Plugin::FilterOutput).configure(conf)
   end
 
   def test_configure
@@ -102,104 +103,104 @@ class Filter < Test::Unit::TestCase
       {'status' => 404, 'agent' => 'Gecko', 'path' => '/wrong'},
     ]
 
-    d = create_driver(CONFIG, 'test.input')
-    d.run do
+    d = create_driver(CONFIG)
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 5, d.emits.length
+    assert_equal 5, d.events.length
 
     d = create_driver(%[
       all deny
       allow status: 200
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.events.length
 
     d = create_driver(%[
       all deny
       allow status: 200, status: 303
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 4, d.emits.length
+    assert_equal 4, d.events.length
 
     d = create_driver(%[
       all deny
       allow agent: Gecko
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.events.length
 
     d = create_driver(%[
       all deny
       allow agent: "Gecko"
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.events.length
 
     d = create_driver(%[
       all deny
       allow agent: "Gecko"
       deny status: 200
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.events.length
 
     d = create_driver(%[
       all deny
       allow agent: /Geck/
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 4, d.emits.length
+    assert_equal 4, d.events.length
 
     d = create_driver(%[
       all deny
       allow agent: /Geck/
       add_prefix hoge
-    ], 'test.input')
-    d.run do
+    ])
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal "hoge.test.input", d.emits[0][0]
+    assert_equal "hoge.test.input", d.events[0][0]
 
     d = create_driver(%[
       all deny
       allow path: /\\/users\\/\\d+/
-    ], 'test.input')
+    ])
 
-    d.run do
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 3, d.emits.length
+    assert_equal 3, d.events.length
 
     data = [
       {'message' => 'hoge', 'message2' => 'hoge2'},
@@ -209,26 +210,26 @@ class Filter < Test::Unit::TestCase
     d = create_driver(%[
       all deny
       allow message2: /hoge2/
-    ], 'test.input')
+    ])
 
-    d.run do
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 1, d.emits.length
+    assert_equal 1, d.events.length
 
     d = create_driver(%[
       all allow
       deny message2: /hoge2/
-    ], 'test.input')
+    ])
 
-    d.run do
+    d.run(default_tag: 'test.input') do
       data.each do |dat|
-        d.emit dat
+        d.feed dat
       end
     end
-    assert_equal 1, d.emits.length
+    assert_equal 1, d.events.length
 
   end
 end
