@@ -1,9 +1,14 @@
-module Fluent
+require 'fluent/plugin/filter_util'
+require 'fluent/plugin/output'
+
+module Fluent::Plugin
 class FilterOutput < Output
-  require 'fluent/plugin/filter_util'
+
+  helpers :event_emitter
+
   include FilterUtil
 
-  Plugin.register_output('filter', self)
+  Fluent::Plugin.register_output('filter', self)
 
   config_param :all, :string, :default => 'allow'
   config_param :allow, :string, :default => ''
@@ -25,7 +30,7 @@ class FilterOutput < Output
     define_method("router") { Fluent::Engine }
   end
 
-  def emit(tag, es, chain)
+  def process(tag, es)
     if @add_prefix
       tag = @add_prefix + '.' + tag
     end
@@ -33,7 +38,6 @@ class FilterOutput < Output
       next unless passRules(record)
       router.emit(tag, time, record)
     end
-    chain.next
   end
 end
 

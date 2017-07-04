@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 require 'helper'
+require 'fluent/test/driver/filter'
 
 class TestFilterFilter < Test::Unit::TestCase
   def setup
@@ -11,8 +12,8 @@ class TestFilterFilter < Test::Unit::TestCase
     deny status: 404
   ]
 
-  def create_driver(conf = CONFIG, tag='test.input')
-    Fluent::Test::FilterTestDriver.new(Fluent::FilterFilter, tag).configure(conf)
+  def create_driver(conf = CONFIG)
+    Fluent::Test::Driver::Filter.new(Fluent::Plugin::FilterFilter).configure(conf)
   end
 
   data("int value" => [{"allows" => [['status', 200]], "denies" => []},
@@ -104,13 +105,13 @@ class TestFilterFilter < Test::Unit::TestCase
       {'status' => 200, 'agent' => 'Gecka', 'path' => '/users/3'},
       {'status' => 404, 'agent' => 'Gecko', 'path' => '/wrong'},
     ]
-    d = create_driver(target, 'test.input')
-    d.run do
+    d = create_driver(target)
+    d.run(default_tag: 'test') do
       inputs.each do |dat|
-        d.filter dat
+        d.feed dat
       end
     end
-    assert_equal expected, d.filtered_as_array.length
+    assert_equal expected, d.filtered.map{|e| e.last}.length
   end
 
   data("allow message2" => [1,
@@ -129,12 +130,12 @@ class TestFilterFilter < Test::Unit::TestCase
       {'message' => 'hoge', 'message2' => 'hoge2'},
       {'message' => 'hoge3'},
     ]
-    d = create_driver(target, 'test.input')
-    d.run do
+    d = create_driver(target)
+    d.run(default_tag: 'test.input') do
       inputs.each do |dat|
-        d.filter dat
+        d.feed dat
       end
     end
-    assert_equal expected, d.filtered_as_array.length
+    assert_equal expected, d.filtered.map{|e| e.last}.length
   end
 end
